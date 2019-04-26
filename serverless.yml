@@ -1,0 +1,48 @@
+service: sentinel2-to-cog
+
+provider:
+  name: aws
+  runtime: python3.6
+  stage: ${opt:stage, 'production'}
+  region: eu-central-1
+  environment:
+    GDAL_CACHEMAX: 64
+    OUTPUT_BUCKET: ${opt:bucket}
+
+  iamRoleStatements:
+    -  Effect: "Allow"
+       Action:
+         - "s3:*"
+       Resource:
+         - "arn:aws:s3:::sentinel-s2*"
+    -  Effect: "Allow"
+       Action:
+         - "s3:*"
+       Resource:
+         - "arn:aws:s3:::${opt:bucket}/*"
+
+  deploymentBucket: ${opt:bucket}
+
+package:
+  artifact: package.zip
+
+functions:
+  translator:
+    handler: sentinel2_to_cog.handler.main
+    memorySize: 3008
+    timeout: 300
+    reservedConcurrency: 1000
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - Sentinel2COG
+              - Arn
+
+resources:
+  Resources:
+    Sentinel2COG:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "Sentinel2COG"
+        VisibilityTimeout: 300

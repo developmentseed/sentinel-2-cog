@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  base:
+    build: .
+    image: s2download:latest
+
+  package:
+    image: s2download:latest
+    volumes:
+      - './bin:/tmp/bin'
+      - '.:/local'
+    command: /tmp/bin/package.sh
