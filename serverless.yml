@@ -29,7 +29,7 @@ package:
 functions:
   translator:
     handler: sentinel2_to_cog.handler.main
-    memorySize: 3008
+    memorySize: 2048
     timeout: 300
     reservedConcurrency: 1000
     events:
