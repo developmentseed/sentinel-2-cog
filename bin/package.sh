@@ -3,8 +3,6 @@ echo "-----------------------"
 echo "Creating lambda package"
 echo "-----------------------"
 echo
-echo "Remove useless python files"
-find $PACKAGE_PREFIX -name "*-info" -type d -exec rm -rdf {} +
 
 echo "Remove lambda python packages"
 rm -rdf $PACKAGE_PREFIX/boto3/ \
@@ -16,7 +14,7 @@ rm -rdf $PACKAGE_PREFIX/boto3/ \
   && rm -rdf $PACKAGE_PREFIX/numpy/doc/
 
 echo "Remove uncompiled python scripts"
-find $PACKAGE_PREFIX -type f -name '*.pyc' | while read f; do n=$(echo $f | sed 's/__pycache__\///' | sed 's/.cpython-36//'); cp $f $n; done;
+find $PACKAGE_PREFIX -type f -name '*.pyc' | while read f; do n=$(echo $f | sed 's/__pycache__\///' | sed 's/.cpython-[2-3][0-9]//'); cp $f $n; done;
 find $PACKAGE_PREFIX -type d -a -name '__pycache__' -print0 | xargs -0 rm -rf
 find $PACKAGE_PREFIX -type f -a -name '*.py' -print0 | xargs -0 rm -f
 
